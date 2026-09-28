@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="style1" parent="@android:style/TextAppearance">
+    <item name="android:textColor">#159874</item>
+    <item name="android:textSize">30sp</item>
+    <item name="android:typeface">monospace</item>
+    </style>
+
+    <style name="style1.bigfont">
+    <item name="android:textSize">50sp</item>
+    </style>
+    
+</resources>

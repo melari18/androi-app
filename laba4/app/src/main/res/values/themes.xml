@@ -1,0 +1,13 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Base.Theme.Laba4" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">#FCF2DE</item>
+        <item name="android:textColor">#39476E</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
+    <style name="Theme.Laba4" parent="Base.Theme.Laba4" />
+
+</resources>
