@@ -1,0 +1,19 @@
+# Android Studio
+.idea/
+*.iml
+.gradle/
+build/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+.DS_Store
+
+# Кэш Gradle
+.gradle/
+**/.gradle/
+**/build/
+**/local.properties
+
+# Служебные файлы IDE
+**/.idea/

@@ -3,4 +3,5 @@
     <string name="hint_editText">Введите имя</string>
     <string name="fio">Мельничук Арина Дмитриевна, гр.БОМ41ПРИ</string>
     <string name="enter">Поприветствовать</string>
+    <string name="empty" />
 </resources>

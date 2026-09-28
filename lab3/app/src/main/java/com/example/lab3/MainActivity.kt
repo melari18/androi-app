@@ -1,5 +1,6 @@
-package com.example.laba2
+package com.example.lab3
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -19,16 +20,13 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val textView = findViewById<TextView>(R.id.textView)
         val editText = findViewById<EditText>(R.id.editTextText)
         val button = findViewById<Button>(R.id.button)
-        textView.text = "" // чтобы при старте не был виден
-        button.setOnClickListener { textView.text = "Привет, " + editText.text + "!" }
-        if (!editText.text.isEmpty()) {
-            textView.text = "Привет, " + editText.text + "!"
-        } else {
-            textView.text = ""
-        }
 
+        button.setOnClickListener{
+            val intent = Intent(this@MainActivity, SecondActivity::class.java)
+            intent.putExtra("text2remember", editText.text.toString())
+            startActivity(intent)
+        }
     }
 }
