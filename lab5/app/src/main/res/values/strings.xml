@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">lab5</string>
-    <string name="fio">Мельничук Арина гр. БОМ41ПРИ</string>
+    <string name="fio">Мельничук Арина, гр. БОМ41ПРИ</string>
+    <string name="dialog_title">Просмотр картинки</string>
+    <string name="close">Закрыть</string>
+    <string name="recycler_label">RecyclerView (сетка 2×2):</string>
+    <string name="listview_label">ListView:</string>
 </resources>

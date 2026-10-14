@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/decelerate_interpolator">
+
+    <!-- Выезд справа -->
+    <translate
+        android:fromXDelta="100%"
+        android:toXDelta="0%"
+        android:duration="800" />
+
+    <!-- Появление -->
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:duration="800" />
+
+    <!-- Лёгкий поворот -->
+    <rotate
+        android:fromDegrees="-15"
+        android:toDegrees="0"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:duration="800" />
+
+</set>

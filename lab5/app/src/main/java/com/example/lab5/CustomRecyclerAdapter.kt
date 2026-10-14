@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 
 class CustomRecyclerAdapter(
-    context: Context,
+    private val context: Context,
     private val images: List<Image>
 ) : RecyclerView.Adapter<CustomRecyclerAdapter.ViewHolder>() {
 
@@ -29,7 +30,26 @@ class CustomRecyclerAdapter(
         val image = images[position]
         holder.text.text = image.name
         holder.image.setImageResource(image.imageRes)
+
+        // Клик по картинке — открытие диалога
+        holder.image.setOnClickListener { view ->
+            showImageDialog(image.imageRes)
+        }
     }
 
     override fun getItemCount(): Int = images.size
+
+    private fun showImageDialog(imageRes: Int) {
+        val dialogView = inflater.inflate(R.layout.dialog_image, null)
+        dialogView.findViewById<ImageView>(R.id.dialogImageView).setImageResource(imageRes)
+
+        AlertDialog.Builder(context)
+            .setTitle(R.string.dialog_title)
+            .setView(dialogView)
+            .setPositiveButton(R.string.close) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
 }
