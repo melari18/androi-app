@@ -26,9 +26,6 @@ class SecondActivity : AppCompatActivity() {
         val button = findViewById<Button>(R.id.button2)
 
         button.setOnClickListener {
-            val intent = Intent(this@SecondActivity, MainActivity::class.java)
-            intent.putExtra("text2remember", textView.text.toString())
-            startActivity(intent)
             finish()
         }
     }
