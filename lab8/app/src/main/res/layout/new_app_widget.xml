@@ -1,19 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Widget.Lab8.AppWidget.Container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.Lab8.AppWidgetContainer">
+    android:background="#6200EE"
+    android:padding="12dp">
 
+    <!-- Текст со ссылкой -->
     <TextView
         android:id="@+id/appwidget_text"
-        style="@style/Widget.Lab8.AppWidget.InnerView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="8dp"
-        android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
-        android:textSize="24sp"
-        android:textStyle="bold|italic" />
+        android:layout_centerInParent="true"
+        android:background="#FFFFFF"
+        android:padding="12dp"
+        android:textColor="#6200EE"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:text="✎"
+        android:backgroundTint="#FFFFFF"
+        android:textColor="#6200EE"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="8dp" />
+
 </RelativeLayout>

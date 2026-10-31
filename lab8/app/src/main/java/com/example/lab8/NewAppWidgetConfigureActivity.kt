@@ -5,88 +5,66 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.widget.Button
 import android.widget.EditText
-import com.example.lab8.databinding.NewAppWidgetConfigureBinding
 
-/**
- * The configuration screen for the [NewAppWidget] AppWidget.
- */
 class NewAppWidgetConfigureActivity : Activity() {
-    private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
-    private lateinit var appWidgetText: EditText
-    private var onClickListener = View.OnClickListener {
-        val context = this@NewAppWidgetConfigureActivity
 
-        // When the button is clicked, store the string locally
-        val widgetText = appWidgetText.text.toString()
-        saveTitlePref(context, appWidgetId, widgetText)
+    private var widgetID = AppWidgetManager.INVALID_APPWIDGET_ID
 
-        // It is the responsibility of the configuration activity to update the app widget
-        val appWidgetManager = AppWidgetManager.getInstance(context)
-        updateAppWidget(context, appWidgetManager, appWidgetId)
-
-        // Make sure we pass back the original appWidgetId
-        val resultValue = Intent()
-        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        setResult(RESULT_OK, resultValue)
-        finish()
-    }
-    private lateinit var binding: NewAppWidgetConfigureBinding
-
-    public override fun onCreate(icicle: Bundle?) {
+    override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
-
-        // Set the result to CANCELED.  This will cause the widget host to cancel
-        // out of the widget placement if the user presses the back button.
+        setContentView(R.layout.new_app_widget_configure)
         setResult(RESULT_CANCELED)
 
-        binding = NewAppWidgetConfigureBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        appWidgetText = binding.appwidgetText as EditText
-        binding.addButton.setOnClickListener(onClickListener)
-
-        // Find the widget id from the intent.
-        val intent = intent
         val extras = intent.extras
         if (extras != null) {
-            appWidgetId = extras.getInt(
-                AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID
+            widgetID = extras.getInt(
+                AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID
             )
-        }
 
-        // If this activity was started with an intent without an app widget ID, finish with an error.
-        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            finish()
-            return
-        }
+            val context = this
+            val widgetManager = AppWidgetManager.getInstance(context)
+            val editText = findViewById<EditText>(R.id.appwidget_text)
+            val button = findViewById<Button>(R.id.add_button)
 
-        appWidgetText.setText(loadTitlePref(this@NewAppWidgetConfigureActivity, appWidgetId))
+            // ЗАГРУЖАЕМ ССЫЛКУ: если она есть, ставим в поле. Если нет — оставляем пустым.
+            val prefs = context.getSharedPreferences("com.example.lab8.NewAppWidget", 0)
+            val currentUrl = prefs.getString("appwidget_$widgetID", "")
+            if (!currentUrl.isNullOrEmpty()) {
+                editText.setText(currentUrl)
+            }
+            // Если currentUrl пустой, поле останется таким, каким задано в XML (например, с https://)
+
+            button.setOnClickListener {
+                val newUrl = editText.text.toString()
+
+                // Сохраняем ссылку
+                val editor = context.getSharedPreferences("com.example.lab8.NewAppWidget", 0).edit()
+                editor.putString("appwidget_$widgetID", newUrl)
+                editor.apply()
+
+                // Обновляем виджет сразу
+                updateAppWidget(context, widgetManager, widgetID)
+
+                val resultValue = Intent()
+                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID)
+                setResult(RESULT_OK, resultValue)
+                finish()
+            }
+        }
     }
-
 }
 
-private const val PREFS_NAME = "com.example.lab8.NewAppWidget"
-private const val PREF_PREFIX_KEY = "appwidget_"
-
-// Write the prefix to the SharedPreferences object for this widget
+// Вспомогательные функции можно оставить здесь (или удалить, если они больше не нужны)
 internal fun saveTitlePref(context: Context, appWidgetId: Int, text: String) {
-    val prefs = context.getSharedPreferences(PREFS_NAME, 0).edit()
-    prefs.putString(PREF_PREFIX_KEY + appWidgetId, text)
+    val prefs = context.getSharedPreferences("com.example.lab8.NewAppWidget", 0).edit()
+    prefs.putString("appwidget_$appWidgetId", text)
     prefs.apply()
 }
 
-// Read the prefix from the SharedPreferences object for this widget.
-// If there is no preference saved, get the default from a resource
 internal fun loadTitlePref(context: Context, appWidgetId: Int): String {
-    val prefs = context.getSharedPreferences(PREFS_NAME, 0)
-    val titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null)
-    return titleValue ?: context.getString(R.string.appwidget_text)
-}
-
-internal fun deleteTitlePref(context: Context, appWidgetId: Int) {
-    val prefs = context.getSharedPreferences(PREFS_NAME, 0).edit()
-    prefs.remove(PREF_PREFIX_KEY + appWidgetId)
-    prefs.apply()
+    val prefs = context.getSharedPreferences("com.example.lab8.NewAppWidget", 0)
+    return prefs.getString("appwidget_$appWidgetId", "") ?: ""
 }
