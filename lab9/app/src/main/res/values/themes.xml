@@ -1,0 +1,7 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Убедитесь, что тут НЕТ .NoActionBar -->
+    <style name="Base.Theme.Lab9" parent="Theme.Material3.DayNight">
+    </style>
+
+    <style name="Theme.Lab9" parent="Base.Theme.Lab9" />
+</resources>
