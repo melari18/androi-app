@@ -1,186 +1,112 @@
 package com.example.lab13
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.widget.Button
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.MediaController
+import android.widget.RadioGroup
+import android.widget.Toast
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var videoView: VideoView
-    private lateinit var btnLocal: Button
-    private lateinit var btnInternet: Button
-    private lateinit var seekBar: SeekBar
-    private lateinit var textTime: TextView
-    private lateinit var btnPlayPause: Button
+    private lateinit var radioGroup: RadioGroup
+    private lateinit var rbLocal: android.widget.RadioButton
+    private lateinit var rbNetwork: android.widget.RadioButton
 
-    private val LOCAL_URI = "android.resource://com.example.lab13/" + R.raw.local_video
-    private val INTERNET_URI = "https://www.w3schools.com/html/mov_bbb.mp4"
+    // Локальное видео из папки res/raw
+    private val localVideoUri: Uri by lazy {
+        Uri.parse("android.resource://$packageName/${R.raw.local_video}")
+    }
 
-    private var isLocalVideo = true
-    private var savedPosition = 0
-    private var isUserSeeking = false
-
-    // Переменная, которая будет запоминать текущую секунду
-    private var lastKnownPosition = 0
-
-    private val handler = Handler(Looper.getMainLooper())
+    // Легкое тестовое видео из интернета
+    private val networkVideoUri: Uri = Uri.parse("https://www.w3schools.com/html/mov_bbb.mp4")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         videoView = findViewById(R.id.videoView)
-        btnLocal = findViewById(R.id.btnLocal)
-        btnInternet = findViewById(R.id.btnInternet)
-        seekBar = findViewById(R.id.seekBar)
-        textTime = findViewById(R.id.textTime)
-        btnPlayPause = findViewById(R.id.btnPlayPause)
+        radioGroup = findViewById(R.id.radioGroup)
+        rbLocal = findViewById(R.id.rbLocal)
+        rbNetwork = findViewById(R.id.rbNetwork)
 
-        // Если приложение пересоздается (поворот экрана)
-        if (savedInstanceState != null) {
-            isLocalVideo = savedInstanceState.getBoolean("isLocal", true)
-            savedPosition = savedInstanceState.getInt("position", 0)
-        } else {
-            // Если это первый запуск
-            loadPositionFromPrefs()
+        // Настройка контроллера (кнопки Play/Pause/Перемотка)
+        val mediaController = MediaController(this)
+        mediaController.setAnchorView(videoView)
+        videoView.setMediaController(mediaController)
+
+        // Обработка ошибок загрузки видео (например, нет интернета)
+        videoView.setOnErrorListener { _, what, extra ->
+            Toast.makeText(this, "Ошибка загрузки видео! Проверьте интернет.", Toast.LENGTH_LONG).show()
+            true
         }
 
-        // Восстанавливаем последнюю известную позицию
-        lastKnownPosition = savedPosition
+        // Загружаем видео при старте
+        // Читаем сохраненную позицию из памяти телефона
+        val prefs = getSharedPreferences("VideoPrefs", Context.MODE_PRIVATE)
+        val savedPosition = prefs.getInt("last_position", 0)
+        val isLocal = prefs.getBoolean("last_is_local", true)
+
+        rbLocal.isChecked = isLocal
+        rbNetwork.isChecked = !isLocal
+
+        loadVideo(isLocal, savedPosition, playWhenReady = false)
+
+        // Переключение между локальным видео и интернетом
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
+            val isLocalSelected = checkedId == R.id.rbLocal
+            // При смене источника начинаем видео с 0-й секунды
+            loadVideo(isLocalSelected, 0, playWhenReady = true)
+        }
+    }
+
+    private fun loadVideo(isLocal: Boolean, startPosition: Int, playWhenReady: Boolean) {
+        val uri = if (isLocal) localVideoUri else networkVideoUri
+        videoView.setVideoURI(uri)
 
         videoView.setOnPreparedListener { mp ->
-            seekBar.max = videoView.duration
-            updateTimeText(savedPosition, videoView.duration)
-
-            if (savedPosition > 0) {
-                // Если есть позиция для восстановления, перематываем
-                videoView.seekTo(savedPosition)
-
-                // Даем 200 мс на то, чтобы перемотка сработала, и только потом включаем
-                handler.postDelayed({
-                    videoView.start()
-                    btnPlayPause.text = "Pause"
-                    updateSeekBar()
-                }, 200)
-            } else {
-                // Если позиция 0, запускаем с начала
+            if (startPosition > 0) {
+                videoView.seekTo(startPosition)
+            }
+            if (playWhenReady) {
                 videoView.start()
-                btnPlayPause.text = "Pause"
-                updateSeekBar()
             }
         }
-
-        // Загружаем видео
-        playVideo(isLocalVideo)
-
-        // Обработчики кнопок
-        btnLocal.setOnClickListener {
-            isLocalVideo = true
-            savedPosition = 0
-            lastKnownPosition = 0
-            playVideo(true)
-        }
-
-        btnInternet.setOnClickListener {
-            isLocalVideo = false
-            savedPosition = 0
-            lastKnownPosition = 0
-            playVideo(false)
-        }
-
-        btnPlayPause.setOnClickListener {
-            if (videoView.isPlaying) {
-                videoView.pause()
-                btnPlayPause.text = "Play"
-            } else {
-                if (videoView.currentPosition >= videoView.duration) {
-                    videoView.seekTo(0)
-                }
-                videoView.start()
-                btnPlayPause.text = "Pause"
-                updateSeekBar()
-            }
-        }
-
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    videoView.seekTo(progress)
-                    lastKnownPosition = progress // Обновляем позицию при перемотке
-                    updateTimeText(progress, videoView.duration)
-                }
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) { isUserSeeking = true }
-            override fun onStopTrackingTouch(seekBar: SeekBar?) { isUserSeeking = false }
-        })
     }
 
-    private fun playVideo(isLocal: Boolean) {
-        videoView.stopPlayback()
-        if (isLocal) {
-            videoView.setVideoURI(Uri.parse(LOCAL_URI))
-        } else {
-            videoView.setVideoURI(Uri.parse(INTERNET_URI))
-        }
-    }
-
-    private fun updateSeekBar() {
-        if (videoView.isPlaying && !isUserSeeking) {
-            val currentPosition = videoView.currentPosition
-            seekBar.progress = currentPosition
-            updateTimeText(currentPosition, videoView.duration)
-
-            // СОХРАНЯЕМ ТЕКУЩУЮ ПОЗИЦИЮ КАЖДЫЕ 100 МС
-            lastKnownPosition = currentPosition
-
-            if (currentPosition >= videoView.duration) {
-                btnPlayPause.text = "Play"
-            }
-        }
-        handler.postDelayed({ updateSeekBar() }, 100)
-    }
-
-    private fun updateTimeText(currentMs: Int, totalMs: Int) {
-        val currentSec = currentMs / 1000
-        val totalSec = totalMs / 1000
-        val currentStr = String.format("%02d:%02d", currentSec / 60, currentSec % 60)
-        val totalStr = String.format("%02d:%02d", totalSec / 60, totalSec % 60)
-        textTime.text = "$currentStr / $totalStr"
-    }
-
-    // Сохранение при повороте
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        // Сохраняем нашу переменную lastKnownPosition, а не currentPosition у VideoView
-        outState.putBoolean("isLocal", isLocalVideo)
-        outState.putInt("position", lastKnownPosition)
-        videoView.pause()
-    }
-
-    // Сохранение при выходе в фон (Home)
+    // Сохранение позиции при сворачивании приложения или выходе из него
     override fun onPause() {
         super.onPause()
-        val prefs = getSharedPreferences("VideoPrefs", MODE_PRIVATE).edit()
-        prefs.putInt("position", lastKnownPosition)
-        prefs.putBoolean("isLocal", isLocalVideo)
+        val prefs = getSharedPreferences("VideoPrefs", Context.MODE_PRIVATE).edit()
+        prefs.putInt("last_position", videoView.currentPosition)
+        prefs.putBoolean("last_is_local", rbLocal.isChecked)
         prefs.apply()
-        videoView.pause()
+
+        // Ставим на паузу, чтобы звук не играл в фоне
+        if (videoView.isPlaying) {
+            videoView.pause()
+        }
     }
 
-    private fun loadPositionFromPrefs() {
-        val prefs = getSharedPreferences("VideoPrefs", MODE_PRIVATE)
-        savedPosition = prefs.getInt("position", 0)
-        isLocalVideo = prefs.getBoolean("isLocal", true)
+    // Создание меню
+    override fun onCreateOptionsMenu(menu: android.view.Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        handler.removeCallbacksAndMessages(null)
+    // Обработка нажатия на пункт "О программе"
+    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
+        if (item.itemId == R.id.action_about) {
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("О программе")
+                .setMessage("Лаба 13: Работа с видео\n\nАвтор: Мельничук Арина, гр. БОМ41ПРИ")
+                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                .show()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

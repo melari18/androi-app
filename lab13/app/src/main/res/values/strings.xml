@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">lab13</string>
+    <string name="about">О программе</string>
     <string name="fio">Мельничук Арина, гр. БОМ41ПРИ</string>
 </resources>
