@@ -16,11 +16,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Регистрируем TextView для контекстного меню (долгое нажатие)
-        val textView = findViewById<TextView>(R.id.text1)
-        registerForContextMenu(textView)
+        // Регистрируем ОБА TextView для контекстного меню
+        val helloText = findViewById<TextView>(R.id.text1)
+        val labText = findViewById<TextView>(R.id.text2)
+
+        registerForContextMenu(helloText)
+        registerForContextMenu(labText)
     }
 
+    // ===== ОПЦИОНАЛЬНОЕ МЕНЮ (три точки) =====
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         return true
@@ -28,7 +32,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-
         if (id == R.id.show_text) {
             val textView = findViewById<TextView>(R.id.text1)
             if (item.isChecked) {
@@ -40,12 +43,10 @@ class MainActivity : AppCompatActivity() {
             }
             return true
         }
-
         if (id == R.id.about) {
             showAboutDialog()
             return true
         }
-
         return super.onOptionsItemSelected(item)
     }
 
@@ -55,32 +56,49 @@ class MainActivity : AppCompatActivity() {
         menuInfo: ContextMenu.ContextMenuInfo?
     ) {
         super.onCreateContextMenu(menu, v, menuInfo)
-        menuInflater.inflate(R.menu.contextmenu, menu)
+
+        when (v.id) {
+            R.id.text1 -> {
+                menuInflater.inflate(R.menu.contextmenu2, menu)
+            }
+            R.id.text2 -> {
+                menuInflater.inflate(R.menu.contextmenu, menu)
+            }
+        }
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        val textView = findViewById<TextView>(R.id.text1)
 
-        if (id == R.id.color_red) {
-            textView.setTextColor(Color.parseColor("red"))
+        val helloText = findViewById<TextView>(R.id.text1)
+        val labText = findViewById<TextView>(R.id.text2)
+
+        if (id == R.id.color_black) {
+            helloText.setTextColor(Color.BLACK)
             return true
         }
-        if (id == R.id.color_black) {
-            textView.setTextColor(Color.parseColor("black"))
+        if (id == R.id.color_red) {
+            helloText.setTextColor(Color.RED)
+            return true
+        }
+
+        if (id == R.id.color_blue) {
+            labText.setTextColor(Color.BLUE)
+            return true
+        }
+        if (id == R.id.color_green) {
+            labText.setTextColor(Color.GREEN)
             return true
         }
 
         return super.onContextItemSelected(item)
     }
 
-    // ===== ДИАЛОГ «О ПРОГРАММЕ» =====
-
     private fun showAboutDialog() {
         AlertDialog.Builder(this)
             .setTitle("О программе")
             .setMessage(
-                        "Опциональное меню: скрытие TextView\n" +
+                "Опциональное меню: скрытие TextView\n" +
                         "Контекстное меню: изменение цвета текста\n\n" +
                         "Автор: Мельничук Арина, гр. БОМ41ПРИ"
             )
