@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">lab12</string>4<string name="play_sound">Воспроизвести звук</string>
+    <string name="fio">Мельничук Арина, гр. БОМ41ПРИ</string>
+    <string name="about">О программе</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="stop">Stop</string>
+</resources>
