@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">lab11</string>
+    <string name="show_notification">Показать уведомление</string>
+    <string name="fio">Мельничук Арина, гр. БОМ41ПРИ</string>
+
+    <string name="channel_name">Мои уведомления</string>
+    <string name="channel_description">Канал для уведомлений из приложения</string>
+    <string name="notif_title">Привет!</string>
+    <string name="notif_text">Это тестовое уведомление со звуком, sjdbh esrdvdefv sdvsdv wsdvergt </string>
+    <string name="notif_channel_id">my_channel_id</string>
+</resources>
