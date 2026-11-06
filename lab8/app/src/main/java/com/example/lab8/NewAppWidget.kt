@@ -26,17 +26,17 @@ internal fun updateAppWidget(
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int
 ) {
-    // Получаем сохраненную ссылку (или пустую строку, если ее нет)
+    // Получаем сохраненную ссылку (или пустую строку)
     val prefs = context.getSharedPreferences("com.example.lab8.NewAppWidget", 0)
     val savedUrl = prefs.getString("appwidget_$appWidgetId", "") ?: ""
 
     val views = RemoteViews(context.packageName, R.layout.new_app_widget)
 
-    // 1. Убираем http:// и https:// для красивого отображения
+    // 1. Убираем http:// и https://
     val displayUrl = savedUrl.replace("https://", "").replace("http://", "")
     views.setTextViewText(R.id.appwidget_text, displayUrl)
 
-    // 2. Клик по тексту -> открыть сайт (если ссылка есть)
+    // 2. Клик по тексту -> открыть сайт
     if (savedUrl.isNotEmpty()) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(savedUrl))
         val pending = PendingIntent.getActivity(
@@ -45,7 +45,7 @@ internal fun updateAppWidget(
         views.setOnClickPendingIntent(R.id.appwidget_text, pending)
     }
 
-    // 3. Клик по кнопке ✎ -> открыть настройки
+    // 3. Клик по кнопке -> открыть настройки
     val intentEdit = Intent(context, NewAppWidgetConfigureActivity::class.java)
     intentEdit.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
     val pendingEdit = PendingIntent.getActivity(

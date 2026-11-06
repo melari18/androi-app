@@ -5,7 +5,6 @@
     android:background="#6200EE"
     android:padding="12dp">
 
-    <!-- Текст со ссылкой -->
     <TextView
         android:id="@+id/appwidget_text"
         android:layout_width="wrap_content"

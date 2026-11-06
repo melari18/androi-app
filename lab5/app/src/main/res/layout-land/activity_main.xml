@@ -8,7 +8,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- ===== Левая половина: RecyclerView ===== -->
     <TextView
         android:id="@+id/recyclerLabel"
         android:layout_width="wrap_content"
@@ -30,7 +29,6 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         tools:listitem="@layout/list_item" />
 
-    <!-- ===== Разделитель по центру ===== -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
@@ -38,7 +36,6 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
 
-    <!-- ===== Правая половина: ListView ===== -->
     <TextView
         android:id="@+id/listviewLabel"
         android:layout_width="wrap_content"
@@ -59,7 +56,6 @@
         app:layout_constraintStart_toEndOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ===== ФИО внизу (по центру всего экрана) ===== -->
     <TextView
         android:id="@+id/textFio"
         android:layout_width="wrap_content"

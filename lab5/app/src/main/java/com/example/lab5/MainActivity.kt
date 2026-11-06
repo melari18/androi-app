@@ -33,13 +33,13 @@ class MainActivity : AppCompatActivity() {
 
         setData()
 
-        // ===== RecyclerView (сетка 2×2) =====
+        // RecyclerView
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        recyclerView.layoutManager = GridLayoutManager(this, 2)     // ← НЕ ЗАБЫТЬ
+        recyclerView.layoutManager = GridLayoutManager(this, 2)
         val recyclerAdapter = CustomRecyclerAdapter(this, images)
         recyclerView.adapter = recyclerAdapter
 
-        // ===== ListView =====
+        // ListView
         val listView = findViewById<ListView>(R.id.listView)
         val listViewAdapter = MyListViewAdapter()
         listView.adapter = listViewAdapter

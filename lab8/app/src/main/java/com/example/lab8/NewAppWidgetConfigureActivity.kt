@@ -35,7 +35,6 @@ class NewAppWidgetConfigureActivity : Activity() {
             if (!currentUrl.isNullOrEmpty()) {
                 editText.setText(currentUrl)
             }
-            // Если currentUrl пустой, поле останется таким, каким задано в XML (например, с https://)
 
             button.setOnClickListener {
                 val newUrl = editText.text.toString()
@@ -55,16 +54,4 @@ class NewAppWidgetConfigureActivity : Activity() {
             }
         }
     }
-}
-
-// Вспомогательные функции можно оставить здесь (или удалить, если они больше не нужны)
-internal fun saveTitlePref(context: Context, appWidgetId: Int, text: String) {
-    val prefs = context.getSharedPreferences("com.example.lab8.NewAppWidget", 0).edit()
-    prefs.putString("appwidget_$appWidgetId", text)
-    prefs.apply()
-}
-
-internal fun loadTitlePref(context: Context, appWidgetId: Int): String {
-    val prefs = context.getSharedPreferences("com.example.lab8.NewAppWidget", 0)
-    return prefs.getString("appwidget_$appWidgetId", "") ?: ""
 }

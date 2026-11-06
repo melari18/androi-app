@@ -31,7 +31,6 @@ class CustomRecyclerAdapter(
         holder.text.text = image.name
         holder.image.setImageResource(image.imageRes)
 
-        // Клик по картинке — открытие диалога
         holder.image.setOnClickListener { view ->
             showImageDialog(image.imageRes)
         }
